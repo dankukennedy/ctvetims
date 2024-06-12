@@ -21,10 +21,12 @@ model User {
 model Receiving {
   id               String   @id @default(uuid())
   serialNo         String   @unique
-  manufacturer     String?
-  model            String?
+  manufacturer     String
+  model            String
   vendor           String?
   type             String?
+  embossedCode     String?
+  price            Float
   registeredUser   User     @relation("ItemRegistrar", fields: [registeredUserId], references: [id])
   registeredUserId String
   purchaseBy       User     @relation("itemBuyer", fields: [purchaseById], references: [id])

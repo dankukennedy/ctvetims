@@ -50,15 +50,15 @@ app.post("/receiving/many", async (req, res) => {
   res.json(newReceive)
 })
 
-// app.get("/receiving", async (req, res) => {
-//   const allReceiving = await prisma.receiving.findMany({
-//     include:{
-//       registeredUser: true,
-//      purchaseBy :true,
-//     },
-//    });
-//    res.json(allReceiving);
-// })
+app.get("/receiving", async (req, res) => {
+  const allReceiving = await prisma.receiving.findMany({
+    include:{
+      registeredUser: true,
+     purchaseBy :true,
+    },
+   });
+   res.json(allReceiving);
+})
 
 app.get("/receiving/:id", async (req, res) => {
   const id = req.params.id;
