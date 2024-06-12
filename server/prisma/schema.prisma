@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(uuid())
+  username     String
+  email        String
+  password     String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  ItemRegister Receiving[] @relation("ItemRegistrar")
+  itemBuyer    Receiving[] @relation("itemBuyer")
+}
+
+model Receiving {
+  id               String   @id @default(uuid())
+  serialNo         String   @unique
+  manufacturer     String?
+  model            String?
+  vendor           String?
+  type             String?
+  registeredUser   User     @relation("ItemRegistrar", fields: [registeredUserId], references: [id])
+  registeredUserId String
+  purchaseBy       User     @relation("itemBuyer", fields: [purchaseById], references: [id])
+  purchaseById     String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
