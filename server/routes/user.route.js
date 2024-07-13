@@ -1,8 +1,8 @@
 import express from 'express'
-import { text } from '../controllers/user.controller.js';
+import { register } from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.get('/test', text); 
+router.get('/register ', register ); 
 
 export default  router

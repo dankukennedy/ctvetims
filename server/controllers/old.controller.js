@@ -1,12 +1,11 @@
 import express from 'express'
 //const router = new express.Router();
 import bcryptjs from 'bcryptjs'
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient
-
+import conn from  '../models/user.model.js'
 
 //register user data
-export const register =  async (req, res, next) =>{
+export const signup =  async (req, res, next) =>{
+    console.log(req.body);
 
     const {username, email, password} = req.body;
 
@@ -17,7 +16,7 @@ export const register =  async (req, res, next) =>{
       conn.query("SELECT * FROM users WHERE username = ?", username, (err, result) =>{
          if(result.length){
             res.status(422).json("The username Already Existed !!")
-          } else{
+         } else{
                  // Hash the password
                  const hashedPassword = bcryptjs.hashSync(password, 10);
             conn.query("INSERT INTO users SET ?",{username, email, password:hashedPassword },(err, result)=>{
@@ -36,4 +35,6 @@ export const register =  async (req, res, next) =>{
    
  
 
-}
+ }
+
+

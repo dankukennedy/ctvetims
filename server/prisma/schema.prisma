@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -9,8 +10,8 @@ datasource db {
 
 model User {
   id           String      @id @default(uuid())
-  username     String
-  email        String
+  username     String      @unique
+  email        String      @unique
   password     String
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -19,18 +20,82 @@ model User {
 }
 
 model Receiving {
-  id               String   @id @default(uuid())
-  serialNo         String   @unique
+  id               String       @id @default(uuid())
+  serialNo         String       @unique
   manufacturer     String
   model            String
   vendor           String?
   type             String?
-  embossedCode     String?
+  embossedCode     String?      @unique
   price            Float
-  registeredUser   User     @relation("ItemRegistrar", fields: [registeredUserId], references: [id])
+  registeredUser   User         @relation("ItemRegistrar", fields: [registeredUserId], references: [id])
   registeredUserId String
-  purchaseBy       User     @relation("itemBuyer", fields: [purchaseById], references: [id])
+  purchaseBy       User         @relation("itemBuyer", fields: [purchaseById], references: [id])
   purchaseById     String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deviceDetails    Allocation[] @relation("deviceInfo")
+}
+
+model Allocation {
+  id               String     @id @default(uuid())
+  userDepartment   String
+  serialOnAllocate String
+  unit             String
+  userName         String
+  receiving        Receiving  @relation("deviceInfo", fields: [serialNo], references: [serialNo])
+  serialNo         String
+  roomNuber        String
+  allocateAt       DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt()
+  transferDetails  Transfer[] @relation("transfers")
+}
+
+model Transfer {
+  id               String        @id @default(uuid())
+  block            String
+  serialOnTransfer String
+  allocation       Allocation    @relation("transfers", fields: [allocationId], references: [id])
+  allocationId     String
+  transferAt       DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  systemAudit      SystemAudit[] @relation("auditsDetals")
+}
+
+model SystemAudit {
+  id             String         @id @default(uuid())
+  status         String
+  remarks        String
+  transfer       Transfer       @relation("auditsDetals", fields: [transferId], references: [id])
+  transferId     String
+  auditAt        DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  decommisioning Decommission[] @relation("decommision")
+}
+
+model Decommission {
+  id             String      @id @default(uuid())
+  reason         String
+  audit          SystemAudit @relation("decommision", fields: [auditId], references: [id])
+  auditId        String
+  decommissionAt DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  disposal       Disposal[]  @relation("disposal")
+}
+
+model Disposal {
+  id             String       @id @default(uuid())
+  decommission   Decommission @relation("disposal", fields: [decommissionId], references: [id])
+  decommissionId String
+  desposalAt     DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  archive        Archive[]    @relation("archive")
+}
+
+model Archive {
+  id         String   @id @default(uuid())
+  duration   String
+  disposal   Disposal @relation("archive", fields: [disposalId], references: [id])
+  disposalId String
+  updatedAt  DateTime @updatedAt
 }
