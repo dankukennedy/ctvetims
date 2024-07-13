@@ -112,7 +112,7 @@ const Design = () => {
                      <a href="#" className="text-yellow-600 hover:text-yellow-900"><button>
                      Edit</button> 
                       </a> 
-                      <a href="#" className="text-red-600 hover:text-red-900"><button>
+                      <a href="#" className="text-red-600 hover:text-red-900"><button className='pt-2'>
                       Delete</button> 
                       </a>
                     </td>
