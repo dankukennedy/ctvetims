@@ -25,6 +25,9 @@ import Projector from './Components/Home/Projector/Projector'
 import Tv from './Components/Home/Tv/Tv'
 import Desktop from './Components/Home/Desktop/Desktop'
 import Coppier from './Components/Home/Coppier/Coppier'
+import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
+import ResetPassword from './Components/ResetPassword/ResetPassword'
+
 
 
 //Import React router dom
@@ -42,6 +45,15 @@ const router = createBrowserRouter([
      path:'/register',
      element: <div> <Register/></div>
    },
+   {
+     path:'/forgotPassword',
+     element: <div> <ForgotPassword/></div>
+   },
+   {
+     path:'/resetPassword',
+     element: <div> <ResetPassword/></div>
+   },
+   
    {
      path:'/dashboard',
      element: <div> <Dashboard /></div>

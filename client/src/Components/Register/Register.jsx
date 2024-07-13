@@ -2,8 +2,9 @@
 import React, {useState} from 'react'
 import './Register.css'
 import  '../../App.css'
-import { Link } from 'react-router-dom'
-import Axios from 'axios'
+//import { Spinner} from 'flowbite'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 // importing our assets
 import video from '../../LoginAssets/video.mp4'
@@ -18,25 +19,40 @@ import {MdMarkEmailRead} from 'react-icons/md'
 
 
 const Register = () => {
+  const  [formData, setFormData] =useState({
+     email:'',
+     username:'',
+     password:''
+  })
+  const [errorMessage, setErrorMessage] = useState(null);
 
-// UseState to hold our inputs
-const [email, setEmail] = useState('');
-const [userName, setUserName] = useState('');
-const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
+   event.preventDefault();
+   
+   if (!formData.username || !formData.email || !formData.password || formData.username === '' || formData.email === '' || formData.password === '') {
+     return setErrorMessage('Please fill out all fields.');
+   } 
+   
+   try {
+     const res = await axios.post("http://localhost:3000/server/auth/register", (formData));
+     
+     if (res.data.Status === "Success") {
+         alert("Successfully Registered");
+         navigate('/');
+      } 
+       else {
+         alert("Error");
+         navigate('/register');
+        }
+    } catch (err) {
+     console.log(err);
+     alert("Error either User already Existed or Conflict");
+     navigate('/register');
+   }
+ };
 
-//Onllick let us get what the user has entered
-const registerUser = () => {
- // we shall require axios to create an API that connects to the sever
-         Axios.post('http://localhost:5001/register', {
-            //create variable to send to the server through the route
-             email:email,
-             userName: userName,
-             password: password
-         }).then(()=>{
-            console.log('User has been created')
-         })
-     }
-
+ 
 
   return (
     <div className='registerPage flex'>
@@ -62,17 +78,16 @@ const registerUser = () => {
                 <div className="headerDiv">
                     <img src={logo} alt="Logo Image" />
                     <h3>Welcome Back!</h3>
-                </div>
-
-                <form action="" className="form grid">
+                </div>   
+                {errorMessage && <span className="showMessage">{errorMessage}</span>}            
+              
+                <form className="form grid" onSubmit={handleSubmit}>
 
                     <div className="inputDiv">
                        <label htmlFor="email">Email</label>
                        <div className="input flex">
                           <MdMarkEmailRead className ='icon' />
-                          <input type="email" id='email' placeholder='Enter Email' onChange={(event)=>{
-                            setEmail(event.target.value)
-                          }}/>
+                          <input type="email" id='email' placeholder='Enter Email' onChange={e =>setFormData({...formData, email:e.target.value})} />
                        </div>
                     </div>
 
@@ -80,9 +95,7 @@ const registerUser = () => {
                        <label htmlFor="username">Username</label>
                        <div className="input flex">
                           <FaUserShield className ='icon' />
-                          <input type="text" id='username' placeholder='Enter Username' onChange={(event)=>{
-                           setUserName(event.target.value)
-                          }}/>
+                          <input type="text" id='username' placeholder='Enter Username' onChange={e =>setFormData({...formData, username:e.target.value})}  />
                        </div>
                     </div>
 
@@ -90,12 +103,10 @@ const registerUser = () => {
                        <label htmlFor="password">Password</label>
                        <div className="input flex">
                           <BsFillShieldLockFill className ='icon' />
-                          <input type="password" id='password' placeholder='Enter Password' onChange={(event)=>{
-                           setPassword(event.target.value)
-                          }}/>
+                          <input type="password" id='password' placeholder='Enter Password' onChange={e =>setFormData({...formData, password:e.target.value})} />
                        </div>
                     </div>
-                    <button type='submit' className='btn flex'>
+                    <button type='submit' className='btn flex' >
                         <span>Register</span>
                         <AiOutlineSwapRight className='icon' />
                     </button>
@@ -105,11 +116,12 @@ const registerUser = () => {
                       </span> 
 
                 </form>
-             </div>
-
+             </div>         
+           
         </div>        
     </div>
-  )
+   )
+ 
 }
 
 export default Register
